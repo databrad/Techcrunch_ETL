@@ -94,7 +94,7 @@ III. Utilisation****************************************************************
 
 2. L'API:
    L'appel de l'api se fait sur un consommateur web ou un navigateur web.
-   Il faut lancer le conteneur sql (base de données) au préalble.
+   Il faut lancer le serveur sql (base de données) au préalble.
    Pour récupérer tous les articles: http://localhost:5000/articles
    pour récupérer les articles de la catégory security: http://localhost:5000/articles?category=security (Il faut au préalable scrapper les articles sur la catégorie "security")
 
