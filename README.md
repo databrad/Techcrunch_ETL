@@ -47,7 +47,8 @@ def get_articles(category, max_load_more):
                 articles.append({"title": title, "link": link, "date_time": date_time})
            
     driver.quit()
-    return articles```
+    return articles
+```
 Cette fonction get_articles utilise Selenium pour automatiser le navigateur, charger la page web et interagir avec les éléments de la page.
 Elle recherche et clique sur le bouton "Reject all" pour rejeter les cookies, puis effectue plusieurs clics(max_load_more) sur le bouton "Load More" pour charger davantage d'articles. 
 Elle utilise aussi BeautifulSoup pour extraire les titres, liens et dates des articles sur la catérogie (category).
