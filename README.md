@@ -1,11 +1,6 @@
 # Techcrunch_ETL
 Une ETL et une API pour récupérer les articles du site techcrunch.com
 
-Plan:
-I. Le fichier scraper.py pour scraper les articles du site.
-II. Le fichier scrapAPI.py pour créer une API et consommer le service.
-III. Utilisation.
-
 
 I. Le fichier scraper.py pour scraper les articles du site.
 
