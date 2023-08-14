@@ -13,6 +13,40 @@ I. Le fichier scraper.py pour scraper les articles du site.*********************
 7. mysql.connector: Utilisée pour la communication avec la base de données MySQL.
 
 # def get_articles(category, max_load_more)
+def get_articles(category, max_load_more):
+    driver = webdriver.Chrome()  # Utilisez le navigateur de votre choix (ici, Chrome)
+    url = f"https://techcrunch.com/category/{category}/" #url où se trouvent les articles
+    driver.get(url)
+    reject_cookies_button = driver.find_element(By.XPATH, "//button[contains(text(), 'Reject all')]")
+    ActionChains(driver).move_to_element(reject_cookies_button).click().perform() # clique sur le bouton "Reject all"
+    time.sleep(2) #attendre 2 secondes 
+    i = 0
+    
+    articles = []
+    while i<max_load_more:
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        
+        try:
+            # Trouver et cliquer sur le bouton "LOAD MORE"
+            load_more_button = driver.find_element(By.XPATH, "//button[contains(., 'Load More')]")
+            ActionChains(driver).move_to_element(load_more_button).click().perform()
+            i = i+1
+            time.sleep(10)  # Attendre un peu après le clic pour que les nouveaux articles chargent (à régler en fonction de la connexion internet)
+        except: 
+        
+            break
+        ActionChains(driver).send_keys(Keys.ESCAPE).perform() # Fermer une fenêtre conceptuelle s'il y'en a (pop-up)
+    #Récupération des données stockées dans des balises et classes spécifiques    
+    for article, temps  in zip(soup.find_all("h2", class_="post-block__title"), 
+                                       soup.find_all("div", class_="river-byline__full-date-time__wrapper")):
+            
+                title = article.find("a").text.strip()
+                link = "https://techcrunch.com" + article.find("a")["href"]
+                date_time = temps.find("time")["datetime"]
+                articles.append({"title": title, "link": link, "date_time": date_time})
+           
+    driver.quit()
+    return articles
 Cette fonction get_articles utilise Selenium pour automatiser le navigateur, charger la page web et interagir avec les éléments de la page.
 Elle recherche et clique sur le bouton "Reject all" pour rejeter les cookies, puis effectue plusieurs clics(max_load_more) sur le bouton "Load More" pour charger davantage d'articles. 
 Elle utilise aussi BeautifulSoup pour extraire les titres, liens et dates des articles sur la catérogie (category).
