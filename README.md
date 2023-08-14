@@ -192,7 +192,7 @@ Si c'est le cas, l'application Flask est lancée en mode de débogage avec l'opt
 III. Utilisation
 
 1. scraper.py :
-   pour scrapper les articles liés à la catégori "venture" en chargeant la page 2 fois (max_load_more = 2) : py scraper.py venture 2
+   pour scrapper les articles liés à la catégorie "venture" en chargeant la page 2 fois (max_load_more = 2) : py scraper.py venture 2
 
 2. L'API:
    L'appel de l'api se fait sur un consommateur web ou un navigateur web.
