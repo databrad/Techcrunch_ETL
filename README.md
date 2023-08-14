@@ -1,7 +1,13 @@
 # Techcrunch_ETL
 Une ETL et une API pour récupérer les articles du site techcrunch.com
 
-I. Le fichier scraper.py pour scraper les articles du site.*********************************************************************************************************
+Plan:
+I. Le fichier scraper.py pour scraper les articles du site.
+II. Le fichier scrapAPI.py pour créer une API et consommer le service.
+III. Utilisation.
+
+
+I. Le fichier scraper.py pour scraper les articles du site.
 
 #importation des librairies
 1. selenium: Utilisée pour l'automatisation du navigateur web (Chromedriver dans ce cas) afin de récupérer les données du site.
@@ -129,7 +135,7 @@ load_data("localhost", "root", "mysql_brad", "3306", final_data)
 La fonction load_data se connecte à la base de données MySQL en utilisant les paramètres fournis, crée une base de données appelée "techcrunch" si elle n'existe pas déjà, utilise cette base de données, puis crée une table "articles" (si elle n'existe pas aussi) avec les colonnes appropriées. Ensuite, elle itère à travers les données préparées, construit et exécute les requêtes d'insertion SQL pour insérer les données dans la table "articles".
 
 
-II. Le fichier scrapAPI.py pour créer une API et consommer le service.**********************************************************************************************
+II. Le fichier scrapAPI.py pour créer une API et consommer le service.
 
 ```python
 from flask import Flask, jsonify, request
@@ -163,7 +169,7 @@ def get_articles():
             query = "SELECT * FROM articles"
             cursor.execute(query)
 
-        articles = cursor.fetchall()
+        articles = cursor.fetchall() #Afficher les articles 
 
         cursor.close()
         db_connection.close()
@@ -188,7 +194,7 @@ if __name__ == '__main__':
 Cette ligne vérifie si le script est exécuté en tant que programme principal, c'est-à-dire si c'est le fichier qui est exécuté directement. 
 Si c'est le cas, l'application Flask est lancée en mode de débogage avec l'option debug=True. Cela signifie que si une erreur se produit, des informations de débogage détaillées seront affichées dans le navigateur.
 
-III. Utilisation****************************************************************************************************************************************************
+III. Utilisation
 
 1. scraper.py :
    pour scrapper les articles liés à la catégori "venture" en chargeant la page 2 fois (max_load_more = 2) : py scraper.py venture 2
