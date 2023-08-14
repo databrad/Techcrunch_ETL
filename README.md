@@ -54,38 +54,102 @@ Elle recherche et clique sur le bouton "Reject all" pour rejeter les cookies, pu
 Elle utilise aussi BeautifulSoup pour extraire les titres, liens et dates des articles sur la catérogie (category).
 
 # def get_article_details(article_url)
+```python
+def get_article_details(article_url):
+    response = requests.get(article_url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    
+    author = soup.find("div", class_="article__byline").find("a").text.strip()
+    content = soup.find("div", class_="article-content").text.strip()
+    
+    return {"author": author, "content": content}
+```
 La fonction get_article_details récupère les détails d'un article en envoyant une requête HTTP à l'URL de l'article (récupérée à l'étape précédente), en analysant le contenu HTML de la page et en extrayant les informations pertinentes telles que l'auteur et le contenu de l'article.
 
+```python
+data = []
+articles = get_articles(category, max_load)
+for article in articles:
+    article_details = get_article_details(article["link"])
+    data.append({"Category": category, "Title": article["title"], "Link": article["link"],"Date_Time":article["date_time"], "Author": article_details["author"], "Content": article_details["content"]})
+# Créer un DataFrame à partir des données
+df = pd.DataFrame(data)
+```
 Les données extraitent sont à présent chargées dans une structure de données appellée Dataframe.
 
 # def prepare_data(df)
+```python
+def prepare_data(df):
+    df["Date"] = df["Date_Time"].map(lambda x: pd.to_datetime(x[:10])) #Récupère la date et converti en Timestamp
+    df["Year"] = df["Date_Time"].map(lambda x: int(x[:4])) #Récupère l'année et converti en entier
+    df["Month"] = df["Date_Time"].map(lambda x: int(x[5:7])) #Récupère le mois et converti en entier
+    df["Day"] = df["Date_Time"].map(lambda x: int(x[8:10])) #Récupère le jour et converti en entier
+    df["Content"] = df["Content"].map(lambda x: x.replace("\n"," ")) # remplace les caractères \n par un espace
+    df = df.drop("Date_Time", axis=1) # supprime la colonne Date_Time
+    return df
+
+final_data = prepare_data(df)
+```
 La fonction prepare_data effectue plusieurs transformations sur le DataFrame pour extraire les informations de date, année, mois et jour à partir de la colonne "Date_Time". 
 Elle nettoie également le contenu de la colonne "Content" en remplaçant les sauts de ligne par des espaces et finalement supprime la colonne "Date_Time" du DataFrame.
 
 # def load_data(host, user, password, port, data)
+```python
+def load_data(host, user, password, port,data):
+    #définir les paramètres pour la connexion à la base de données
+    db_connection = mysql.connector.connect(
+        host=host,  
+        user=user,
+        password=password,
+        port=port  
+    )
+    print("connected")
+    cursor = db_connection.cursor()
+    create_db = "CREATE DATABASE IF NOT EXISTS techcrunch;" #création de la base de données
+    use_db = "USE techcrunch;" #pointe sur la base de données
+    #Création de la table
+    create_query = " CREATE TABLE IF NOT EXISTS articles (id INT AUTO_INCREMENT PRIMARY KEY,category VARCHAR(255),title VARCHAR(511),link VARCHAR(255),author VARCHAR(255),content TEXT,date Date,year int,month int,day int	);"
+    cursor.execute(create_db)
+    cursor.execute(use_db)
+    cursor.execute(create_query)
+    # Charger les données dans la base de données
+    for index, row in data.iterrows():
+        insert_query = "INSERT INTO articles (category, title, link, author, content, date, year, month, day) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        data_tuple = (row["Category"], row["Title"], row["Link"], row["Author"], row["Content"], row["Date"], row["Year"], row["Month"], row["Day"])
+        cursor.execute(insert_query, data_tuple)
+
+    db_connection.commit()
+    cursor.close()
+    db_connection.close()
+
+    print("Données chargées dans la base de données MySQL.")
+
+load_data("localhost", "root", "mysql_brad", "3306", final_data)
+```
 La fonction load_data se connecte à la base de données MySQL en utilisant les paramètres fournis, crée une base de données appelée "techcrunch" si elle n'existe pas déjà, utilise cette base de données, puis crée une table "articles" (si elle n'existe pas aussi) avec les colonnes appropriées. Ensuite, elle itère à travers les données préparées, construit et exécute les requêtes d'insertion SQL pour insérer les données dans la table "articles".
 
 
 II. Le fichier scrapAPI.py pour créer une API et consommer le service.**********************************************************************************************
 
-====================================================================
+```python
 from flask import Flask, jsonify, request
 import mysql.connector
 app = Flask(__name__)
-======================================================================
+```
+
 Ces lignes importent les bibliothèques nécessaires pour créer une application web Flask
 
-=======================================================================
+```python
 db_config = {
     "host": "localhost",
     "user": "root",
     "password": "mysql_brad",
     "database": "techcrunch"
 }
-=========================================================================
+```
 Ces lignes définissent les détails de connexion à la base de données MySQL, tels que l'hôte (machine), l'utilisateur, le mot de passe et la base de données à utiliser.
 
-============================================================================
+```python
 @app.route('/articles', methods=['GET'])
 def get_articles():
     try:
@@ -107,7 +171,7 @@ def get_articles():
         return jsonify({"articles": articles})
     except Exception as e:
         return jsonify({"error": str(e)})
-=============================================================================
+```
 Cette partie définit une route pour l'URL /articles en utilisant la méthode GET. 
 Lorsqu'un client effectue une requête GET à cette URL, la fonction get_articles sera exécutée. La fonction récupère le paramètre de requête category de l'URL (s'il est fourni) pour filtrer les articles par catégorie. 
 Ensuite, une connexion à la base de données MySQL est établie en utilisant les informations de configuration définies précédemment.
@@ -116,16 +180,17 @@ Les résultats de la requête sont récupérés à l'aide de "cursor.fetchall()"
 Les données des articles sont renvoyées au client sous la forme d'une réponse JSON en utilisant la fonction "jsonify". 
 Si une exception se produit lors de l'exécution de cette fonction, une réponse JSON contenant un message d'erreur est renvoyée.
 
-================================================================================
+```python
 if __name__ == '__main__':
     app.run(debug=True)
-================================================================================
+```
+
 Cette ligne vérifie si le script est exécuté en tant que programme principal, c'est-à-dire si c'est le fichier qui est exécuté directement. 
 Si c'est le cas, l'application Flask est lancée en mode de débogage avec l'option debug=True. Cela signifie que si une erreur se produit, des informations de débogage détaillées seront affichées dans le navigateur.
 
 III. Utilisation****************************************************************************************************************************************************
 
-1. scrapy.py :
+1. scraper.py :
    pour scrapper les articles liés à la catégori "venture" en chargeant la page 2 fois (max_load_more = 2) : py scraper.py venture 2
 
 2. L'API:
