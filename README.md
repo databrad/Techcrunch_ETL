@@ -13,6 +13,7 @@ I. Le fichier scraper.py pour scraper les articles du site.*********************
 7. mysql.connector: Utilisée pour la communication avec la base de données MySQL.
 
 # def get_articles(category, max_load_more)
+"""python 
 def get_articles(category, max_load_more):
     driver = webdriver.Chrome()  # Utilisez le navigateur de votre choix (ici, Chrome)
     url = f"https://techcrunch.com/category/{category}/" #url où se trouvent les articles
@@ -47,6 +48,7 @@ def get_articles(category, max_load_more):
            
     driver.quit()
     return articles
+    """
 Cette fonction get_articles utilise Selenium pour automatiser le navigateur, charger la page web et interagir avec les éléments de la page.
 Elle recherche et clique sur le bouton "Reject all" pour rejeter les cookies, puis effectue plusieurs clics(max_load_more) sur le bouton "Load More" pour charger davantage d'articles. 
 Elle utilise aussi BeautifulSoup pour extraire les titres, liens et dates des articles sur la catérogie (category).
