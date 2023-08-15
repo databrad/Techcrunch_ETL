@@ -13,20 +13,20 @@ I. Le fichier scraper.py pour scraper les articles du site.
 6. sys: Utilisée pour accéder aux arguments de la ligne de commande.
 7. mysql.connector: Utilisée pour la communication avec la base de données MySQL.
 
-# def get_articles(category, max_load_more)
+#def get_articles(category, max_load_more)
 Cette fonction get_articles utilise Selenium pour automatiser le navigateur, charger la page web et interagir avec les éléments de la page.
 Elle recherche et clique sur le bouton "Reject all" pour rejeter les cookies, puis effectue plusieurs clics(max_load_more) sur le bouton "Load More" pour charger davantage d'articles. 
 Elle utilise aussi BeautifulSoup pour extraire les titres, liens et dates des articles sur la catérogie (category).
 
-# def get_article_details(article_url)
+#def get_article_details(article_url)
 La fonction get_article_details récupère les détails d'un article en envoyant une requête HTTP à l'URL de l'article (récupérée à l'étape précédente), en analysant le contenu HTML de la page et en extrayant les informations pertinentes telles que l'auteur et le contenu de l'article.
 Ensuite, Les données extraitent sont chargées dans une structure de données appellée Dataframe.
 
-# def prepare_data(df)
+#def prepare_data(df)
 La fonction prepare_data effectue plusieurs transformations sur le DataFrame pour extraire les informations de date, année, mois et jour à partir de la colonne "Date_Time". 
 Elle nettoie également le contenu de la colonne "Content" en remplaçant les sauts de ligne par des espaces et finalement supprime la colonne "Date_Time" du DataFrame.
 
-# def load_data(host, user, password, port, data)
+#def load_data(host, user, password, port, data)
 La fonction load_data se connecte à la base de données MySQL en utilisant les paramètres fournis, crée une base de données appelée "techcrunch" si elle n'existe pas déjà, utilise cette base de données, puis crée une table "articles" (si elle n'existe pas aussi) avec les colonnes appropriées. Ensuite, elle itère à travers les données préparées, construit et exécute les requêtes d'insertion SQL pour insérer les données dans la table "articles".
 
 
