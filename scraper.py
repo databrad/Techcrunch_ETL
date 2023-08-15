@@ -24,7 +24,7 @@ max_load = int(sys.argv[2])
 # étape EXTRACT de l'ETL
 # ===================================================================================================================================================
 def get_articles(category, max_load_more):
-    driver = webdriver.Chrome()  # Utilisez le navigateur de votre choix (ici, Chrome)
+    driver = webdriver.Chrome()  # Interaction avec le navigateur Chrome
     url = f"https://techcrunch.com/category/{category}/"  # url où se trouvent les articles
     driver.get(url)
     reject_cookies_button = driver.find_element(
