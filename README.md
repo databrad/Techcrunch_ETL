@@ -29,6 +29,11 @@ Elle nettoie également le contenu de la colonne "Content" en remplaçant les sa
 #def load_data(host, user, password, port, data)
 La fonction load_data se connecte à la base de données MySQL en utilisant les paramètres fournis, crée une base de données appelée "techcrunch" si elle n'existe pas déjà, utilise cette base de données, puis crée une table "articles" (si elle n'existe pas aussi) avec les colonnes appropriées. Ensuite, elle itère à travers les données préparées, construit et exécute les requêtes d'insertion SQL pour insérer les données dans la table "articles".
 
+Avant d'exécuter le script, notamment la fonction load_data, il faut s'assurer que son serveur mysql est en cours d'exécution pour pouvoir exécuter les différentes requêtes. Dans mon cas j'ai utilisé un conteneur docker mysql que j'ai crée à partir d'une image mysql:
+- docker pull mysql : pour télécharger l'image (dernière version: latest)
+- docker run -d --name mysql_brad -e MYSQL_ROOT_PASSWORD=mysql_brad -p 3306:3306 mysql:latest : pour créer à partir de l'image mysql, mon conteneur "mysql_brad" avec le mot de passe "mysql_brad".
+- docker start mysql_brad : pour lancer le conteneur, en l'occurence le serveur mysql.
+
 
 II. Le fichier scrapAPI.py pour créer une API et consommer le service.
 
